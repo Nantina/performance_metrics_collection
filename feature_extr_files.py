@@ -12,22 +12,23 @@ from datetime import datetime
     
 # Class for file system changes
 class FileHandler(FileSystemEventHandler):
+    """File System Event Handling"""
     def __init__(self):
         self.files_created = 0
         self.files_deleted = 0
         self.files_modified = 0
         self.filed_moved = 0
 
-    def on_modified(self, event):
+    def on_modified(self):
         self.files_modified += 1
 
-    def on_created(self, event):
+    def on_created(self):
         self.files_created += 1
 
-    def on_deleted(self, event):
+    def on_deleted(self):
         self.files_deleted += 1
     
-    def on_moved(self, event):
+    def on_moved(self):
         self.filed_moved += 1
 
     def reset_counts(self):
@@ -56,10 +57,10 @@ def collect_metrics(created, deleted, modified, moved):
         # Kernel info
         "sys_platform": sys.platform,
         "os_name": os.name,
-        # "kernel_version": os.uname().release,
-        # "system_name": os.uname().sysname,
-        # "node_name": os.uname().nodename,
-        # "machine": os.uname().machine,
+        "kernel_version": os.uname().release,
+        "system_name": os.uname().sysname,
+        "node_name": os.uname().nodename,
+        "machine": os.uname().machine,
 
         # CPU 
         "cpu_percent": psutil.cpu_percent(interval=1),
@@ -75,13 +76,13 @@ def collect_metrics(created, deleted, modified, moved):
         "cpu_times_user": cpu_times.user,
         "cpu_times_system": cpu_times.system,
         "cpu_times_idle": cpu_times.idle,
-        # "cpu_times_nice": cpu_times.nice,
-        # "cpu_times_iowait": cpu_times.iowait,
-        # "cpu_times_irq": cpu_times.irq,
-        # "cpu_times_softirq": cpu_times.softirq,
-        # "cpu_times_steal": cpu_times.steal,
-        # "cpu_times_guest": cpu_times.guest,
-        # "cpu_times_guest_nice": cpu_times.guest_nice,
+        "cpu_times_nice": cpu_times.nice,
+        "cpu_times_iowait": cpu_times.iowait,
+        "cpu_times_irq": cpu_times.irq,
+        "cpu_times_softirq": cpu_times.softirq,
+        "cpu_times_steal": cpu_times.steal,
+        "cpu_times_guest": cpu_times.guest,
+        "cpu_times_guest_nice": cpu_times.guest_nice,
 
         # Memory 
         "virtual_memory_total": psutil.virtual_memory().total,
@@ -89,10 +90,10 @@ def collect_metrics(created, deleted, modified, moved):
         "virtual_memory_used": psutil.virtual_memory().used,
         "virtual_memory_percent": psutil.virtual_memory().percent,
         "virtual_memory_free": psutil.virtual_memory().free,
-        # "virtual_memory_active": psutil.virtual_memory().active,
-        # "virtual_memory_buffers": psutil.virtual_memory().buffers,
-        # "virtual_memory_cached": psutil.virtual_memory().cached,
-        # "virtual_memory_shared": psutil.virtual_memory().shared if hasattr(psutil.virtual_memory(), 'shared') else None,
+        "virtual_memory_active": psutil.virtual_memory().active,
+        "virtual_memory_buffers": psutil.virtual_memory().buffers,
+        "virtual_memory_cached": psutil.virtual_memory().cached,
+        "virtual_memory_shared": psutil.virtual_memory().shared if hasattr(psutil.virtual_memory(), 'shared') else None,
 
         "swap_memory_total": psutil.swap_memory().total,
         "swap_memory_used": psutil.swap_memory().used,
@@ -115,9 +116,9 @@ def collect_metrics(created, deleted, modified, moved):
         "disk_io_write_bytes": psutil.disk_io_counters().write_bytes,
         "disk_read_time": psutil.disk_io_counters().read_time,
         "disk_write_time": psutil.disk_io_counters().write_time,
-        # "disk_busy_time": psutil.disk_io_counters().busy_time, # Linux 
-        # "disk_read_merged_count": psutil.disk_io_counters().read_merged_count,
-        # "disk_write_merged_count": psutil.disk_io_counters().write_merged_count,
+        "disk_busy_time": psutil.disk_io_counters().busy_time, 
+        "disk_read_merged_count": psutil.disk_io_counters().read_merged_count,
+        "disk_write_merged_count": psutil.disk_io_counters().write_merged_count,
 
         # Network
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ add more ??
@@ -125,7 +126,12 @@ def collect_metrics(created, deleted, modified, moved):
         "net_io_bytes_recv": psutil.net_io_counters().bytes_recv,
         "net_io_packets_sent": psutil.net_io_counters().packets_sent,
         "net_io_packets_recv": psutil.net_io_counters().packets_recv,
-
+        "net_io_errin": psutil.net_io_counters().errin,
+        "net_io_errout": psutil.net_io_counters().errout,
+        "net_io_dropin": psutil.net_io_counters().dropin,
+        "net_io_dropout": psutil.net_io_counters().dropout,
+        "net_io_dropin": psutil.net_io_counters().dropin,
+        
         # Other System Info
         "boot_time": datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S"),
         "users": len(psutil.users()),
@@ -138,7 +144,6 @@ def collect_metrics(created, deleted, modified, moved):
         "num_of_files_deleted": deleted,
         "num_of_files_modified": modified,
         "num_of_files_moved": moved
-
     }
     return metrics
 
@@ -160,6 +165,7 @@ def save_metrics(metrics, filename):
         writer.writerow(metrics)
 
 def main(interval,filename):
+    """Reset file event counts and collect and save metrics"""
     try: 
         while True:
             created, deleted, modified, moved = event_handler.reset_counts()
@@ -174,6 +180,7 @@ def main(interval,filename):
     observer.join()    
 
 if __name__ == "__main__":
+    # Extract the csv file name by the user
     parser = argparse.ArgumentParser()
     parser.add_argument("filename", type=str, help="The CSV filename to save the metrics.")
     args = parser.parse_args()
@@ -185,4 +192,4 @@ if __name__ == "__main__":
     # observer.schedule(event_handler, path='/', recursive=True) # Unix
     observer.start()
     
-    main(10, args.filename)
+    main(1, args.filename)
