@@ -127,9 +127,8 @@ def collect_metrics(created, deleted, modified, moved):
         "net_io_dropin": psutil.net_io_counters().dropin,
         "net_io_dropout": psutil.net_io_counters().dropout,
         "net_io_dropin": psutil.net_io_counters().dropin,
-        # "num_of_net_connections": len(psutil.net_connections(kind='inet')),
-        "net_connections": psutil.net_connections(kind='inet'),
-        
+        "num_of_net_connections": len(psutil.net_connections(kind='inet')),
+                
         # Other System Info
         "boot_time": datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S"),
         "users": len(psutil.users()),
