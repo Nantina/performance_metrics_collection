@@ -41,11 +41,13 @@ In order to execute the script and collect system performance metrics of a machi
 ``` bash
     python3 feature_extraction.py <file_name_to_store_the_results.csv>
 ```
+
+The file should be executed in Unix (some of the included functions are not supported in Windows).
 ## Results 
 The script has been tested in 3 operating systems: 
-- Windows 11
-- Linux (Ubuntu 22.04)
-- Emulated Raspberry pi3 using QEMU
+- Windows 11 (excluding some of the functions) -> `windows_metrics.csv`
+- Linux (Ubuntu 22.04) -> `linux_metrics.csv`
+- Emulated Raspberry pi3 using QEMU -> `raspberrypi_metrics.csv`
 
 The csv files produced for each of the operating systems are included in this repository. 
 

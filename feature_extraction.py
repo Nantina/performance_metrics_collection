@@ -186,6 +186,7 @@ if __name__ == "__main__":
     event_handler = FileHandler()
     observer = Observer()
     # observer.schedule(event_handler, path='c:\\', recursive=True) # Windows
+    observer.schedule(event_handler, path='/', recursive=True) # Unix root directory
     observer.schedule(event_handler, path='/home/', recursive=True) # Unix
     observer.start()
     
