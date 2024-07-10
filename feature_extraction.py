@@ -18,16 +18,16 @@ class FileHandler(FileSystemEventHandler):
         self.files_modified = 0
         self.filed_moved = 0
 
-    def on_modified(self):
+    def on_modified(self, event):
         self.files_modified += 1
 
-    def on_created(self):
+    def on_created(self, event):
         self.files_created += 1
 
-    def on_deleted(self):
+    def on_deleted(self, event):
         self.files_deleted += 1
     
-    def on_moved(self):
+    def on_moved(self, event):
         self.filed_moved += 1
 
     def reset_counts(self):
@@ -127,6 +127,7 @@ def collect_metrics(created, deleted, modified, moved):
         "net_io_dropin": psutil.net_io_counters().dropin,
         "net_io_dropout": psutil.net_io_counters().dropout,
         "net_io_dropin": psutil.net_io_counters().dropin,
+        # "num_of_net_connections": len(psutil.net_connections(kind='inet')),
         "net_connections": psutil.net_connections(kind='inet'),
         
         # Other System Info
